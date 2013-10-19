@@ -1,0 +1,12 @@
+h1 {
+	text-align: center;	
+}
+
+canvas {
+		position: relative;
+		left: 10%;
+}
+
+body {
+	background-color: #ADD8E6;
+}
