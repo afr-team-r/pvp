@@ -24,7 +24,7 @@ var Scene = function() {
 
 	this.createScene = function(sceneObject) {
 
-		canvas = canvasFactory.canvasInput.ready(function() {
+		canvas = canvasFactory.canvasAll.ready(function() {
 	        canvas.Scene.call(name);
 	 });
 

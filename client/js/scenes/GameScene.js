@@ -1,15 +1,13 @@
-define(["coords", "scenes/Scene", "canvas"], function(Coords, Scene, canvasFactory) {
+define(["scenes/Scene", "canvas", "Player"], function(Scene, canvasFactory, Player) {
 
 
 var GameScene = function() {
 
-	var canvas = canvasFactory.canvasInput;
-	var coords = new Coords();
+	var canvas = canvasFactory.canvasAll;
 
 	var readyFunction = function(stage) {
 
-			var speed = 20;
-
+			/* REMOVER DEPOIS, SUBSTITUIR POR MAPA */
 			var WIDTH = 1500;
 			var HEIGHT = 600;
 
@@ -24,16 +22,14 @@ var GameScene = function() {
 			this.tela.stroke();
 
 			stage.append(this.tela);
+			/* /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ /\ */
 
 
-			this.player = this.createElement();
+			this.jogador = new Player(this.createElement())
+       		stage.append(this.jogador.getPlayerElement());
 
-			this.player.beginPath();
-			this.player.fillStyle = "red";
-			this.player.arc(coords.x, coords.y, 10, 0, Math.PI*2, true);
-			this.player.fill();
-
-			stage.append(this.player);	
+       		// FIXME: WTF
+       		this.jogador.moveRight();
 
 			canvas.Input.keyDown([Input.Left, Input.Right]);
 			canvas.Input.keyUp([Input.Left, Input.Right]);
@@ -42,17 +38,13 @@ var GameScene = function() {
 	var renderFunction = function(stage) {
 
 			if (canvas.Input.isPressed(Input.Right)) {
-	            this.player.x++;
-	            coords.x++;
+	            this.jogador.moveRight();
 	        } else if (canvas.Input.isPressed(Input.Left)) {
-	        	this.player.x--;
-	        	coords.x--;
+	        	this.jogador.moveLeft();
 	        } else if (canvas.Input.isPressed(Input.Up)) {
-	        	this.player.y--;
-	        	coords.y--;
+	        	this.jogador.moveUp();
 	        } else if (canvas.Input.isPressed(Input.Bottom)) {
-	        	this.player.y++;
-	        	coords.y++;
+	        	this.jogador.moveDown();
 	        }
 
 	    	stage.refresh();
@@ -60,6 +52,11 @@ var GameScene = function() {
 
 	  var sceneObj = {
 	    name: "GameScene",
+	    materials: {
+	    	images: {
+	    		img_id: "resources/images/sprites.png"
+	    	}
+	    },
 	    ready: readyFunction,
 	    render: renderFunction
 	 };
