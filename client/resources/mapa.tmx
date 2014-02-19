@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="32" height="16" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="Tileset" tilewidth="32" tileheight="32">
+  <image source="foresttiles.png" width="512" height="512"/>
+ </tileset>
+ <layer name="Floor1" width="32" height="16">
+  <data encoding="base64" compression="zlib">
+   eJx1lNmNBCAMQ9NB6IB0AP1XN7MSll482Y+IKxg7Bysi9rP7tfXs2vq8cb95fq3e/GK9sbeG83w+WsuHZ8I/by0/7R28JX4FPgt3ZWl2Yf5uArvMhH9NL3WKk3Dkp3flSwzhKA7UyhgVMC/w9CY1M/7MH2Mrvs77DGvmpTBO8RAefVUTrkP3M3ocXadwhH8Nf0V/23NNLWW+5DHlzvEY44quSb7CXNG17PitMepZ8K3oOWOsWXcbI/t0wmbv5nCP2ped1YBDDNbNsbu8T04TL/Z+mj+13ugxlT/5U4PHlj1blqPCmfe09zPrkrj/9aL/mcRKvDv1IvEYW9WutGV07c6dteY5YD4zOq8p74wDz7hPXowR87Gix4G50Oj+rDfq9H9oAYdc6buj8+R+ms+N3zyw7/0PY97oy7xNtcD/0e+xHpzbjbm+hf83/wAdCT14
+  </data>
+ </layer>
+ <layer name="Floor2" width="32" height="16">
+  <data encoding="base64" compression="zlib">
+   eJzd0zcPwkAMhuFQd+pO3ak7dQ9tp/4T+LswMYHgvdWKfETJQcQnPZFOZ8lOrHhecnLFzeHZlpd5pNyd/z3mVdPIIIsc8qLm6bB/AUWUUEYF1S/1NqmhjgaaaKEtamwzPJS7My7KfQdd9NDHAMMQvaNmhDEmmGKGuaiJcwb5rXwssMQKa2wi9tb2IbPFDnsccMRJ1LjegZZPet8TMIOWMPuIu7ctcrag//WX+w/KG2j9LIU=
+  </data>
+ </layer>
+ <layer name="Floor3" width="32" height="16">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2AUwMAbPHKlQFxGL4cMAYAvrMgBR4H4GBAfp6Ed+MBVIL4GxNfpaCcyeArEz4D4+QDZ/xVKf8ejhp7xQSpAd9tofiUMAA57D+U=
+  </data>
+ </layer>
+ <layer name="Colisao" width="32" height="16">
+  <data encoding="base64" compression="zlib">
+   eJxjYBg8YAYU04o/2O0fLmAGA26/0zI8sNmJHh+0BMT4l5Ab8MkTSk+E7B8K/qfEPlr4n1Q9MxgGLv0TAsTYPRBphF766e03QuXRYAAAJL0laQ==
+  </data>
+ </layer>
+</map>
