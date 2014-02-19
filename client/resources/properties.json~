@@ -1,0 +1,5 @@
+{
+	"FPS" : 1,
+	"jsonMap": "resources/mapa.json",
+	"tileSize": 32
+}
