@@ -1,17 +1,13 @@
-define(["imageLoader", "properties", "entity"], function(ImageLoader, Properties, Entity) {
+define(["imageLoader", "properties", "entity", "animation"], function(ImageLoader, Properties, Entity, Animation) {
 
 	var Player = function() {
 
 		/** VARIAVEIS **/
 
-		this.init("player", 0, 0, 0, 0, ImageLoader.druid, 100);
-
 		this.dx = 0;
-		this.dy = 0;		
+		this.dy = 0;			    	    
 
-		/** Animation **/
-	    this.frameNum = 0;
-	    this.spriteRow = 3;	    
+	    this.init("player", 0, 0, 0, 0, ImageLoader.druid, 100, 3, new Animation(8, 0, 500, 0));
 		
 		// Setta o dx
 		this.setDx = function(dx) {

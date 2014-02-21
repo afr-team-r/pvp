@@ -62,7 +62,7 @@ define(["game", "properties"], function(Game, Properties) {
 			this.drawResized(
 					this.entities, 
 					entity.image, 
-					(entity.frameNum*Properties.get("tileSize")), 
+					((entity.animation == null ? 0 : entity.animation.currentFrame)*Properties.get("tileSize")), 
 					(entity.spriteRow*Properties.get("tileSize")), 
 					Properties.get("tileSize"), 
 					Properties.get("tileSize"), 

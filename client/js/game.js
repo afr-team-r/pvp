@@ -84,8 +84,6 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 
    	 	this.update = function() {
 
-   	 	//	self.currentTime = new Date().getTime();
-
 			self.renderer.render(); 
 			self.updater.update();
 
