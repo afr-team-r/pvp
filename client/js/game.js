@@ -1,5 +1,7 @@
-define(["map","player","renderer", "properties", "imageLoader"], function(Map, Player, Renderer, Properties, ImageLoader) {
+define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer", "updater", "entity"], 
+	function($, Map, Player, Renderer, Properties, ImageLoader, Timer, Updater, Entity) {
 
+//	var x = require('underscore');
 
 	var Game = function() {
 
@@ -11,10 +13,9 @@ define(["map","player","renderer", "properties", "imageLoader"], function(Map, P
 		this.player = null;
 		this.world = null;
 		this.renderer = null;	
+		this.updater = null;
 
-		this.background = null;
-		this.entity = null;
-		this.foreground = null;
+		this.entities = {};
 
 		KEY_CODES = {
    			32: 'space',
@@ -31,7 +32,7 @@ define(["map","player","renderer", "properties", "imageLoader"], function(Map, P
 			var wait = setInterval(function() {
 
 				/** Verifica se o mapa foi carregado **/
-				if(self.world.ready) {
+				if(self.world && self.world.ready) {
 
 					/** Desenha o background somente uma vez **/
 					self.renderer.drawMap(0);
@@ -47,16 +48,12 @@ define(["map","player","renderer", "properties", "imageLoader"], function(Map, P
 
    	 	/**  SETUP **/
 
-   	 	this.setup = function(background, entity, foreground) {
+   	 	this.setup = function(background, entities, foreground) {
 
    	 		var wait = setInterval(function() {
 
    	 			/** Verifica se as propriedades e as imagens foram carregadas **/
    	 			if(Properties.ready && ImageLoader.ready) {
-
-		   	 		self.background = background;
-					self.entity = entity;
-					self.foreground = foreground;
 
 					self.world = new Map(
 					 [
@@ -69,9 +66,12 @@ define(["map","player","renderer", "properties", "imageLoader"], function(Map, P
 					self.world.init(Properties.get("jsonMap"));
 
 					self.player = new Player();
+					self.addEntity(self.player);
 
 					self.renderer = new Renderer();
-					self.renderer.init(self, entity, foreground);
+					self.renderer.init(self, entities, foreground);
+
+					self.updater = new Updater(self);
 
 					document.onkeydown = self.keyDownEvent;
 
@@ -84,14 +84,27 @@ define(["map","player","renderer", "properties", "imageLoader"], function(Map, P
 
    	 	this.update = function() {
 
-   	 		// UPDATER //
-			self.player.move(self.world); 
-			// UPDATER //
-			
-			self.renderer.render();
+   	 	//	self.currentTime = new Date().getTime();
 
-   	 		requestAnimFrame(self.update);
+			self.renderer.render(); 
+			self.updater.update();
+
+			requestAnimFrame(self.update);  	
    	 	};	 		
+
+   	 	this.addEntity = function(entity) {
+   	 		if(entity instanceof Entity) {
+   	 			if(this.entities[entity.id] == undefined) {
+   	 				this.entities[entity.id] = entity;
+   	 			}
+   	 		}
+   	 	};
+
+   	 	this.forEachEntity = function(callback) {
+   	 		$.each(self.entities, function(k, v) {
+   	 			callback(v);
+   	 		});
+   	 	};
 
    	 	/** EVENTOS DO TECLADO **/
 
@@ -121,20 +134,22 @@ define(["map","player","renderer", "properties", "imageLoader"], function(Map, P
 	  			}
   		};		
 
-
-
-   	 	window.requestAnimFrame = (function(){
-  			return  window.requestAnimationFrame 	||
-          	window.webkitRequestAnimationFrame 		||
-          	window.mozRequestAnimationFrame    		||
-          	function( callback ){
-            	//window.setTimeout(callback, 1000000 );
-         	 };
-		})();
-
-
-
 	};
+
+	/*************** ANIMATION FRAME ****************/
+
+	window.requestAnimFrame = function(){
+	    return (
+	        window.requestAnimationFrame       || 
+	        window.webkitRequestAnimationFrame || 
+	        window.mozRequestAnimationFrame    || 
+	        window.oRequestAnimationFrame      || 
+	        window.msRequestAnimationFrame     || 
+	        function(/* function */ callback){
+	            window.setTimeout(callback, 1000 / 60);
+	        }
+	    );
+	}();
 
 	return Game;
 });

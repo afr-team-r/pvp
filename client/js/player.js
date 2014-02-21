@@ -1,19 +1,13 @@
-define(["imageLoader", "properties"], function(ImageLoader, Properties) {
+define(["imageLoader", "properties", "entity"], function(ImageLoader, Properties, Entity) {
 
 	var Player = function() {
 
 		/** VARIAVEIS **/
-		this.x = 0;
-		this.y = 0;
 
-		this.posx = 0;
-		this.posy = 0;
+		this.init("player", 0, 0, 0, 0, ImageLoader.druid, 100);
 
 		this.dx = 0;
-		this.dy = 0;
-
-		this.speed = 100;
-		this.playerImage = ImageLoader.druid;
+		this.dy = 0;		
 
 		/** Animation **/
 	    this.frameNum = 0;
@@ -32,20 +26,22 @@ define(["imageLoader", "properties"], function(ImageLoader, Properties) {
 		/** Funcao cuida do movimento do personagem **/
 		this.move = function(world) {
 
-			var colidiu = world.getColisaoValue(this.posx+this.dx, this.posy+this.dy);
+			var colidiu = world.getColisaoValue(this.gridX+this.dx, this.gridY+this.dy);
 
 			if(!colidiu) {
 				this.x += this.dx * Properties.get("tileSize");
 				this.y += this.dy * Properties.get("tileSize");
 			     	
-			 	this.posx += this.dx;
-				this.posy += this.dy;
+			 	this.gridX += this.dx;
+				this.gridY += this.dy;
 			}  
 
 			this.dx = this.dy = 0;
 	     }
 
 	};
+
+Player.prototype = new Entity();
 
 return Player;
 

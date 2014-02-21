@@ -10,8 +10,8 @@ define(["jquery","game", "imageLoader"], function($,Game, ImageLoader) {
 			this.tileset = ImageLoader.foresttiles;
 
 			this.tileSize = null;
-			this.rowTileCount = null;
-			this.colTileCount = null;
+			this.height = null;
+			this.width = null;
 			this.imageNumTiles = null;
 
 			this.ready = 0;
@@ -27,7 +27,7 @@ define(["jquery","game", "imageLoader"], function($,Game, ImageLoader) {
 
 			/** Retorna o valor do vetor de colisoes para x e y **/
 			this.getColisaoValue = function(x ,y) {
-				return this.getColisaoGrid()[(y*this.colTileCount) + x];
+				return this.getColisaoGrid()[(y*this.width) + x];
 			}
 
 			/**  Inicia o mapa, lendo do json mapFile **/
@@ -37,8 +37,8 @@ define(["jquery","game", "imageLoader"], function($,Game, ImageLoader) {
 
 					self.tileSize = data.tilewidth;
 					self.imageNumTiles = data.tilesets[0].imagewidth/self.tileSize;
-					self.colTileCount = data.width;
-					self.rowTileCount = data.height;
+					self.width = data.width;
+					self.height = data.height;
 
 					$.each(self.layers, function(k,v) {
 						self.layers[k].values = data.layers[k].data;

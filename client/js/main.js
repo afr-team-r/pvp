@@ -4,14 +4,14 @@ require(["jquery","game"], function($, Game) {
 
 		/**  Canvas **/
 		var background = document.getElementById("background");
-		var entity = document.getElementById("entity");
+		var entities = document.getElementById("entities");
 		var foreground = document.getElementById("foreground");
 
 		/** Cria o objeto do jogo **/
 		game = new Game();
 
 		/* Carrega tudo necssario */
-		game.setup(background,entity, foreground);
+		game.setup(background,entities, foreground);
 
 		/** Inicia o jogo **/
 		game.init();
