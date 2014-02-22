@@ -110,24 +110,10 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
   			
 	  			switch(KEY_CODES[e.keyCode]) {
 	  				case 'right': 
-	  					self.player.dx=1; 
-	  					self.player.spriteRow = 2;
-	  				break;
-
 	  				case 'left':
-	  					self.player.dx=-1; 
-	  					self.player.spriteRow = 0;
-	  				break;
-
 	  				case 'up': 
-	  					self.player.dy=-1; 
-	  					self.player.spriteRow = 1;
-	  				break;
-
 	  				case 'down': 
-	  					self.player.dy=1; 
-	  					self.player.spriteRow = 3;
-
+	  					self.player.move(self.world, KEY_CODES[e.keyCode]);
 	  				break;
 	  			}
   		};		

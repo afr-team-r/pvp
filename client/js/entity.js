@@ -28,6 +28,10 @@ define([], function() {
 			this.animation = animation;
 		};
 
+		this.update = function() {
+			// override it
+		}
+
 	};
 
 	return Entity;
