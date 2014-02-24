@@ -116,7 +116,7 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 	  					self.player.move(self.world, KEY_CODES[e.keyCode]);
 	  				break;
 	  			}
-  		};		
+  		};	
 
 	};
 

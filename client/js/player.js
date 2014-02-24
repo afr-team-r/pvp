@@ -4,16 +4,29 @@ define(["imageLoader", "properties", "entity", "animation", "timer"], function(I
 
 		/** VARIAVEIS **/
 
+		// Quantos frames de animacao possui o personagem
+		this.animationFrames = 9;
+
+		// Ao apertar setas direcionais
 		this.dx = 0;
 		this.dy = 0;	
 
-		this.speed = 500;
-		this.delay = 600-this.speed;
+		// Delay na animacao e movimentacao
+		// Divido pelo numero de frames
+		this.stepDelay = 10;
+		this.animationDelay = this.stepDelay;
 
-		this.walkDelay = new Timer(this.delay+100);
-		this.smallStepTimer = new Timer(this.delay/8);
+		//  Timer de movimentacao
+		this.smallStepTimer = new Timer(this.stepDelay);
+		this.isMoving = 0;
 
-		this.smallStep = Properties.get("tileSize")/8;
+		// Distancia de movimentacao por quadro
+		// Eh dividido o tamanho do tile pelo numero de frames
+		// Assim, quando a animacao acabar, o usuario tera movido
+		// um SQM exatamente, junto com o termino da animacao
+		this.smallStep = Properties.get("tileSize")/this.animationFrames;
+
+		// Contador de passos
 	    this.smallStepCounter = 0;
 
 		var directions = {
@@ -24,40 +37,57 @@ define(["imageLoader", "properties", "entity", "animation", "timer"], function(I
 		};		    	    
 
 		// (id, x, y, gridX, gridY, image, speed, spriteRow, animation)
-	    this.init("player", 0, 0, 0, 0, ImageLoader.druid, 100, 3, new Animation(8, 0, this.delay/8, 0));
+	    this.init("player", 0, 0, 0, 0, ImageLoader.druid, 100, 3, new Animation(this.animationFrames, 0, this.animationDelay, 0));
 		
-
+	    // Evento ao apertas as setas do teclado
 		this.move = function(world, direction) {
 
-			if(!this.walkDelay.isOver(new Date().getTime()))
-				return;			
+			if(!this.isMoving) {
 
-			var colidiu = world.getColisaoValue(this.gridX+directions[direction].dx, this.gridY+directions[direction].dy);
+				// Retorna diferente de 0 se colidiu
+				var colidiu = world.getColisaoValue(
+					this.gridX + directions[direction].dx, 
+					this.gridY + directions[direction].dy
+				);
 
-			if(!colidiu) {
-				this.dx = directions[direction].dx;
-				this.dy = directions[direction].dy;
+				if(!colidiu) {
+					// Computa o passo dado com sucesso
+					this.dx = directions[direction].dx;
+					this.dy = directions[direction].dy;
 
-				this.spriteRow = directions[direction].spriteRow;
-				this.animation.restartAnimation();				
-			}  			
+					// Atualiza a linha de animacao				
+					this.spriteRow = directions[direction].spriteRow;
+
+					this.isMoving = 1;
+
+					// Executa um loop de animacao
+					this.animation.restartAnimation();				
+				}
+			}		
 	     };
 
-	     this.update = function(){
+	     // Funcao padrao de todas as Entity
+	     this.update = function() {
 
-	     	if(!this.smallStepTimer.isOver(new Date().getTime()) || (this.dx == 0 && this.dy == 0))
+	     	// Se ja passou o delay do passo, e devemos mover o jogador
+	     	// Caso nao, sai
+	     	if(!this.smallStepTimer.isOver(new Date().getTime()) || !this.isMoving)
 	     		return;
 
+	     	// Move o jogador um pouco por frame
 	        this.x += this.dx * this.smallStep;
 			this.y += this.dy * this.smallStep;
 
-			if(++this.smallStepCounter == this.animation.numFrames) {
+			// Se acabou a animacao, entao movemos tudo
+			if(++this.smallStepCounter ==this.animation.numFrames) {
 
 				this.gridX += this.dx;
 				this.gridY += this.dy;
 
 				this.smallStepCounter=0;
 				this.dx = this.dy = 0; 
+
+				this.isMoving = 0;
 			}			
 	     };
 	};

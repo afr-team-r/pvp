@@ -20,7 +20,8 @@ define(["timer"], function(Timer) {
 		};
 
 		this.restartAnimation = function() {
-			counter = 0;
+			this.currentFrame = 0;
+			counter = 1;
 		};
 
 
