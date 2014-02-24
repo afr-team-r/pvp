@@ -13,7 +13,7 @@ define(["imageLoader", "properties", "entity", "animation", "timer"], function(I
 
 		// Delay na animacao e movimentacao
 		// Divido pelo numero de frames
-		this.stepDelay = 10;
+		this.stepDelay = 20;
 		this.animationDelay = this.stepDelay;
 
 		//  Timer de movimentacao

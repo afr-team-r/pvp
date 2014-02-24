@@ -1,8 +1,6 @@
 define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer", "updater", "entity"], 
 	function($, Map, Player, Renderer, Properties, ImageLoader, Timer, Updater, Entity) {
 
-//	var x = require('underscore');
-
 	var Game = function() {
 
 		/**  SELF **/
@@ -86,6 +84,8 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 
 			self.renderer.render(); 
 			self.updater.update();
+
+		//	window.setTimeout(self.update, 5);
 
 			requestAnimFrame(self.update);  	
    	 	};	 		
