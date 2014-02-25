@@ -8,12 +8,18 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 
 		/** VARIAVEIS **/
 
+		this.width = 0;
+		this.height = 0;
+
 		this.player = null;
 		this.world = null;
 		this.renderer = null;	
 		this.updater = null;
 
 		this.entities = {};
+		this.entitiesGrid = [];
+
+		this.mouse = {x: 0, y: 0, strokeStyle: "#CC0000"};
 
 		KEY_CODES = {
    			32: 'space',
@@ -53,6 +59,9 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
    	 			/** Verifica se as propriedades e as imagens foram carregadas **/
    	 			if(Properties.ready && ImageLoader.ready) {
 
+					self.width = entities.width;
+					self.height = entities.height;	
+
 					self.world = new Map(
 					 [
 						{"name": "FLOOR1", "context": background, "values":[]},
@@ -72,6 +81,8 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 					self.updater = new Updater(self);
 
 					document.onkeydown = self.keyDownEvent;
+
+					$('#foreground').mousemove(self.mouseOverEvent);				
 
 					clearInterval(wait);
 				}
@@ -104,6 +115,40 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
    	 		});
    	 	};
 
+   	 	this.addToEntityGrid = function(x, y, entity) {
+   	 		if(entity instanceof Entity) {
+
+   	 			index = y*self.world.width + x;
+
+   	 			if(this.entitiesGrid[index] == null) {
+
+   	 				self.removeFromEntityGrid(entity);
+
+   	 				self.entitiesGrid[index] = entity;
+   	 			}
+
+   	 		}
+   	 	};
+
+   	 	this.removeFromEntityGrid = function(entity, callback) {
+   	 		$.each(this.entitiesGrid, function(k, v) {
+   	 			if(v == entity) 
+   	 				delete self.entitiesGrid[k];
+   	 			
+   	 		});
+   	 	};
+
+   	 	this.isEntityGridOcupped = function(x, y) {
+
+   	 		entity = self.entitiesGrid[y*self.world.width + x];
+
+   	 		if(entity != null && entity instanceof Entity) {
+   	 			return 1;
+   	 		}
+
+   	 		return 0;
+   	 	};
+
    	 	/** EVENTOS DO TECLADO **/
 
    	 	this.keyDownEvent = function(e) {
@@ -117,6 +162,25 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 	  				break;
 	  			}
   		};	
+
+  		this.mouseOverEvent = function(event) {
+			var gamePos = $('#container').offset();
+
+			$('#container').css('cursor','default');
+
+			self.mouse.x = parseInt((event.pageX - gamePos.left) / Properties.get("tileSize"));
+			self.mouse.y = parseInt((event.pageY - gamePos.top) / Properties.get("tileSize"));
+
+			if(self.world.getColisaoValue(self.mouse.x, self.mouse.y)) {
+				self.mouse.strokeStyle = "#CC0000";			
+			} else if (self.isEntityGridOcupped(self.mouse.x, self.mouse.y)) {
+				$('#container').css('cursor','pointer');
+				self.mouse.strokeStyle = "#FFFF00";
+			} else {
+				self.mouse.strokeStyle = "#66FF00";
+			}
+
+		};
 
 	};
 

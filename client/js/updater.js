@@ -25,7 +25,10 @@ define(["map"], function(Map) {
 				entity.update();
 
 				if(entity.animation != null)
+
 					entity.animation.animate();
+				
+					self.game.addToEntityGrid(entity.gridX, entity.gridY, entity);
 			});
 		}
 

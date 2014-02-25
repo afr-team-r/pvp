@@ -42,12 +42,15 @@ define(["game", "properties"], function(Game, Properties) {
 		/** O metodo que rendeniza de fato **/
 		this.render = function() {
 
-			if(this.running) {
+			if(this.running) {	
+
+				this.clearCanvas(this.entities);
+
+				self.drawMouse();		
 
 				this.game.forEachEntity(function(entity) {
-					self.clearEntity(entity);
 					self.drawEntity(entity);
-				});
+				});				
 
 				// Camada acima do personagem
 				this.drawMap(2);
@@ -79,6 +82,25 @@ define(["game", "properties"], function(Game, Properties) {
 				Properties.get("tileSize")*3,
 				Properties.get("tileSize")*3);
 		}
+
+		this.clearCanvas = function(canvas) {
+			canvas.beginPath();
+			canvas.clearRect(0,0, this.game.width, this.game.height);
+		};
+
+
+		this.drawMouse = function() {
+
+			this.entities.strokeStyle = this.game.mouse.strokeStyle;
+
+			this.entities.rect(
+									this.game.mouse.x * Properties.get("tileSize"), 
+									this.game.mouse.y * Properties.get("tileSize"),
+									Properties.get("tileSize") ,
+									Properties.get("tileSize"));
+			this.entities.stroke();
+		};
+
 
 		this.drawTile = function(ctx, tileNumber, row, col) {
 
