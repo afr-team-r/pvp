@@ -175,7 +175,7 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 				self.mouse.strokeStyle = "#CC0000";			
 			} else if (self.isEntityGridOcupped(self.mouse.x, self.mouse.y)) {
 				$('#container').css('cursor','pointer');
-				self.mouse.strokeStyle = "#FFFF00";
+				self.mouse.strokeStyle = "#FFFF00";			
 			} else {
 				self.mouse.strokeStyle = "#66FF00";
 			}

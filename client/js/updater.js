@@ -3,6 +3,8 @@ define(["map"], function(Map) {
 
 	var Updater = function(game) {
 
+		var self = this;
+
 		this.game = game;
 
 		this.player = game.player;
@@ -27,6 +29,7 @@ define(["map"], function(Map) {
 				if(entity.animation != null)
 
 					entity.animation.animate();
+					entity.hitAnimation.animate();
 				
 					self.game.addToEntityGrid(entity.gridX, entity.gridY, entity);
 			});

@@ -1,4 +1,4 @@
-require(["jquery","game"], function($, Game) {
+require(["jquery","game", "client"], function($, Game, Client) {
 
 	var initGame = function() {
 
@@ -9,9 +9,11 @@ require(["jquery","game"], function($, Game) {
 
 		/** Cria o objeto do jogo **/
 		game = new Game();
-
-		/* Carrega tudo necssario */
+	
+		/* Carrega tudo necessario */
 		game.setup(background,entities, foreground);
+
+		Client.init("ws://localhost:5000", game);
 
 		/** Inicia o jogo **/
 		game.init();

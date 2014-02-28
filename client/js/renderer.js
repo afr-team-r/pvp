@@ -1,4 +1,4 @@
-define(["game", "properties"], function(Game, Properties) {
+define(["game", "properties", "jquery"], function(Game, Properties, $) {
 
 	var Renderer = function() {
 
@@ -14,6 +14,7 @@ define(["game", "properties"], function(Game, Properties) {
 
 		this.entities = null;       
         this.foreground = null;
+        this.statusBar = null;
 
         this.running = 0;
 
@@ -24,7 +25,9 @@ define(["game", "properties"], function(Game, Properties) {
         	this.player = this.game.player;
         	this.world = this.game.world;
 
-			this.entities = (entities && entities.getContext) ? entities.getContext("2d") : null;       
+			this.entities = (entities && entities.getContext) ? entities.getContext("2d") : null;     
+			this.foreground = (foreground && foreground.getContext) ? foreground.getContext("2d") : null;   
+			this.statusBar =  $('#lifeBar')[0].getContext("2d");
 
 			this.start();
 		}
@@ -45,17 +48,54 @@ define(["game", "properties"], function(Game, Properties) {
 			if(this.running) {	
 
 				this.clearCanvas(this.entities);
+				this.clearCanvas(this.statusBar);
+				this.clearCanvas(this.foreground);
 
 				self.drawMouse();		
 
+				this.drawStatusBar();
+
 				this.game.forEachEntity(function(entity) {
 					self.drawEntity(entity);
+					
+					self.hitTaken(entity);
 				});				
 
 				// Camada acima do personagem
 				this.drawMap(2);
 			}
 		};
+
+		this.hitTaken = function(entity) {
+
+			if(entity.hitTaken) {
+				this.foreground.fillStyle = "red";
+				this.foreground.fillText(entity.hitTaken, entity.x + 5, entity.y - entity.hitAnimation.currentFrame);
+
+				 if(entity.hitAnimation.currentFrame == entity.hitAnimation.numFrames-1) 
+				 	entity.hitTaken = 0;
+			}
+		};
+
+		this.drawStatusBar = function() {
+			this.statusBar.font = "20px verdana";
+
+			this.statusBar.strokeStyle = "white";
+			this.statusBar.rect(1,1,1020,50);
+
+			this.statusBar.stroke();
+
+
+			this.statusBar.fillStyle = "red";
+			this.statusBar.fillText("HP:",10,20);
+
+			this.statusBar.fillRect(50,10, this.player.getHPPercent() * 2,10);
+
+			this.statusBar.fillStyle = "blue";
+			this.statusBar.fillText("SP:",10,45);
+
+			this.statusBar.fillRect(50,35,this.player.getSPPercent() * 2,10);			
+		}
 
 		this.drawResized = function(ctx,img,sx,sy,swidth,sheight,x,y,width,height) {
 			ctx.drawImage(img,sx,sy,swidth,sheight,x*this.resizeValue,y*this.resizeValue,width*this.resizeValue,height*this.resizeValue);
@@ -96,8 +136,8 @@ define(["game", "properties"], function(Game, Properties) {
 			this.entities.rect(
 									this.game.mouse.x * Properties.get("tileSize"), 
 									this.game.mouse.y * Properties.get("tileSize"),
-									Properties.get("tileSize") ,
-									Properties.get("tileSize"));
+									Properties.get("tileSize")*this.resizeValue,
+									Properties.get("tileSize")*this.resizeValue);
 			this.entities.stroke();
 		};
 

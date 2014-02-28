@@ -36,9 +36,26 @@ define(["imageLoader", "properties", "entity", "animation", "timer"], function(I
 			"down" : {"dx" : 0, "dy" : 1, "spriteRow" : 3}
 		};		    	    
 
-		// (id, x, y, gridX, gridY, image, speed, spriteRow, animation)
-	    this.init("player", 0, 0, 0, 0, ImageLoader.druid, 100, 3, new Animation(this.animationFrames, 0, this.animationDelay, 0));
+		// (id, hpm hpMax, sp, spMax, hitTaken, x, y, gridX, gridY, image, speed, spriteRow, animation)
+	    this.init("player", 100, 10, 100, 10, 0, 0, 0, 0, 0, ImageLoader.druid, 100, 3, new Animation(this.animationFrames, 0, this.animationDelay, 0));
 		
+	    this.getHPPercent = function() {
+	    	return (this.hp / this.hpMax) * 100;
+	    }
+
+	    this.getSPPercent = function() {
+	    	return (this.sp / this.spMax) * 100;
+	    }
+
+	    this.setHP = function(hp) {
+	    	this.hp = hp > 0 ? hp : 0;
+	    }
+
+	     this.setSP = function(sp) {
+	    	this.sp = sp > 0 ? sp : 0;
+	    }
+
+
 	    // Evento ao apertas as setas do teclado
 		this.move = function(world, direction) {
 
@@ -62,6 +79,10 @@ define(["imageLoader", "properties", "entity", "animation", "timer"], function(I
 
 					// Executa um loop de animacao
 					this.animation.restartAnimation();				
+				} else {
+					this.hp = this.hp - 12;
+					this.hitTaken = 12;
+					this.hitAnimation.restartAnimation();
 				}
 			}		
 	     };
