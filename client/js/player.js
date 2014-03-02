@@ -1,4 +1,4 @@
-define(["imageLoader", "properties", "entity", "animation", "timer"], function(ImageLoader, Properties, Entity, Animation, Timer) {
+define(["imageLoader", "properties", "entity", "animation", "timer", "client"], function(ImageLoader, Properties, Entity, Animation, Timer, Client) {
 
 	var Player = function() {
 
@@ -60,6 +60,8 @@ define(["imageLoader", "properties", "entity", "animation", "timer"], function(I
 		this.move = function(world, direction) {
 
 			if(!this.isMoving) {
+
+				Client.send("andei");
 
 				// Retorna diferente de 0 se colidiu
 				var colidiu = world.getColisaoValue(

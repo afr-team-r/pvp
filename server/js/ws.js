@@ -9,15 +9,15 @@ var Connection = function(id, connection, server) {
     this.server = server;
     this.id = id;
     
-    onClose = function(callback) {
+    this.onClose = function(callback) {
         this.close_callback = callback;
     };
     
-    listen = function(callback) {
+    this.listen = function(callback) {
         this.listen_callback = callback;
     };
     
-    close = function(logError) {
+    this.close = function(logError) {
         console.log("Closing connection to "+this.connection.remoteAddress+". Error: "+logError);
         this.connection.close();
     };
@@ -40,7 +40,7 @@ var Connection = function(id, connection, server) {
 			if(self.close_callback)
 				self.close_callback();
 
-			delete self.connections[self.id];
+			self.server.deleteConnection(self.id);
 	});	
 
 };
@@ -77,15 +77,23 @@ var Server = function(port) {
 	this.deleteConnection = function(id) {
 		delete this.connections[id];
 		this.numberOfConnections--;
+
+		console.log(this.numberOfConnections + " players online");
 	};
 
 	this.addConnection = function(connection) {
 		this.connections[connection.id] = connection;
 		this.numberOfConnections++;
+
+		console.log(this.numberOfConnections + " players online");
 	};
 
 	 this.onConnect = function(callback) {
         this.connection_callback = callback;
+    };
+
+    this.getConnections = function() {
+    	return this.connections;
     };
 
 };
