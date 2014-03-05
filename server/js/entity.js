@@ -1,4 +1,5 @@
 
+	/* ARRUMAR ESSA MERDA DEPOIS */
 	var Entity = {
 
 		init : function(id, type, hp, sp, hpMax, spMax, gridX, gridY, image, speed, spriteRow) {

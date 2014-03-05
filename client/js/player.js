@@ -61,7 +61,7 @@ define(["imageLoader", "properties", "entity", "animation", "timer", "client"], 
 
 			if(!this.isMoving) {
 
-				Client.send("andei");
+				//Client.send("andei");
 
 				// Retorna diferente de 0 se colidiu
 				var colidiu = world.getColisaoValue(

@@ -14,6 +14,7 @@ define(["jquery","game"], function($, Game) {
 
 			socket.addEventListener("message", function(event) {
 				var messagejson = JSON.parse(event.data);
+				
 				alert(JSON.stringify(messagejson));
 			});
 

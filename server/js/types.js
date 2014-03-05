@@ -1,6 +1,10 @@
 Types = {
-	WELCOME : 0,
-	MOVE : 1
+
+	Messages: {
+		WELCOME : 0,
+		MOVE : 1
+	}		
+	
 };
 
 module.exports = Types;

@@ -1,5 +1,5 @@
-define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer", "updater", "entity"], 
-	function($, Map, Player, Renderer, Properties, ImageLoader, Timer, Updater, Entity) {
+define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer", "updater", "entity", "client"], 
+	function($, Map, Player, Renderer, Properties, ImageLoader, Timer, Updater, Entity, Client) {
 
 	var Game = function() {
 
@@ -74,6 +74,9 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 
 					self.player = new Player();
 					self.addEntity(self.player);
+
+					// Test
+					Client.send([0, 2]);
 
 					self.renderer = new Renderer();
 					self.renderer.init(self, entities, foreground);
