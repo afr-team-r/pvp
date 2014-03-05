@@ -82,7 +82,7 @@ define(["imageLoader", "properties", "entity", "animation", "timer", "client"], 
 					// Executa um loop de animacao
 					this.animation.restartAnimation();				
 				} else {
-					this.hp = this.hp - 12;
+					this.setHP(this.hp-12);
 					this.hitTaken = 12;
 					this.hitAnimation.restartAnimation();
 				}
