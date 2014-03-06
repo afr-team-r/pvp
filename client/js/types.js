@@ -1,7 +1,16 @@
-Types = {
-	WELCOME : 0,
-	MOVE : 1
+define([], function() {
+
+var Types = {
+
+	Messages: {
+		WELCOME : 0,
+		MOVE : 1
+	}		
+	
 };
 
-module.exports = Types;
+return Types;
+
+});
+
 

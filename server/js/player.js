@@ -18,7 +18,10 @@ var Player = function(connection, game) {
 	this.init(connection.id, "warrior", 100,10, 100, 10, 0, 0, null, 100, 3);
 
 	this.send = function(msg) {
-		self.connection.connection.send(JSON.stringify(msg));
+		msgStr = JSON.stringify(msg);
+
+		console.log("Sending " + msgStr);
+		self.connection.connection.send(msgStr);
 	};
 
 	/* Implementa o callback para o fechamento
@@ -46,7 +49,7 @@ var Player = function(connection, game) {
 
 		switch(action) {
 			case Types.Messages.WELCOME: 
-				self.send([Types.Messages.WELCOME, self.hp, self.sp, self.gridX, self.gridX]);
+				self.send([Types.Messages.WELCOME, self.id, self.hp, self.sp, self.gridX, self.gridY]);
 			break;
 		}
 		

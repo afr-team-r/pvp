@@ -13,8 +13,6 @@ require(["jquery","game", "client"], function($, Game, Client) {
 		/* Carrega tudo necessario */
 		game.setup(background,entities, foreground);
 
-		Client.init("ws://localhost:5000", game);
-
 		/** Inicia o jogo **/
 		game.init();
 	}

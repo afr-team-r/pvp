@@ -16,6 +16,8 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 		this.renderer = null;	
 		this.updater = null;
 
+		this.client = null;
+
 		this.entities = {};
 		this.entitiesGrid = [];
 
@@ -75,8 +77,8 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 					self.player = new Player();
 					self.addEntity(self.player);
 
-					// Test
-					Client.send([0, 2]);
+					self.client = new Client("localhost", "5000");
+					self.client.init();
 
 					self.renderer = new Renderer();
 					self.renderer.init(self, entities, foreground);
@@ -162,6 +164,7 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 	  				case 'up': 
 	  				case 'down': 
 	  					self.player.move(self.world, KEY_CODES[e.keyCode]);
+	  					self.client.sendWelcome();
 	  				break;
 	  			}
   		};	
