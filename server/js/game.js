@@ -1,6 +1,7 @@
 Types = require("./types.js"),
 Map = require("./map.js")
-Entity = require("./entity.js");
+Entity = require("./entity.js"),
+_ = require('underscore');
 
 /* Abatracao que repesenta um mundo */
 module.exports = Game = function() {
@@ -11,6 +12,9 @@ module.exports = Game = function() {
 		quantidade de jogadores */
 	this.ready = false;
 	this.numberPlayers = 0;
+
+	// TODO
+	this.broadcastQueue = {}; 
 
 	/* apenas para colisoes, no momento */
 	this.map = null;
@@ -34,7 +38,32 @@ module.exports = Game = function() {
 
 				clearInterval(wait);
 			}
-		}, 200);		
+		}, 200);	
+
+		/* Implementa o callback (chamado no main)
+	 	para quando um player se conecta ao mundo */
+	 	this.onPlayerConnect(function(player) {
+
+		 	self.numberPlayers++;	 	
+		 	self.addToEntityGrid(player.gridX, player.gridY ,player);
+		 	self.addEntity(player);
+
+		 	/* Implementa o callback de conexao fechada do player */
+		 	player.onConnectionClose(function() {
+		 		self.numberPlayers--;
+		 		self.removeFromEntityGrid(player.gridX, player.gridY ,player);
+		 		self.removeEntity(player);
+		 	});
+
+		 	/* Implementa o callback de broadcast */
+		 	player.onBroadcast(function(msg) {
+		 		_.each(self.entities, function(entity) {
+		 			entity.connection.send(msg);
+		 		});
+		 	});
+
+		 });
+
 	};
 
 	/* METODOS */
@@ -76,21 +105,4 @@ module.exports = Game = function() {
 	this.onPlayerConnect = function(callback) {
         this.connect_callback = callback;
     };	
-
-	 /* Implementa o callback (chamado no main)
-	 	para quando um player se conecta ao mundo */
-	 this.onPlayerConnect(function(player) {
-
-	 	self.numberPlayers++;	 	
-	 	self.addToEntityGrid(player.gridX, player.gridY ,player);
-	 	self.addEntity(player);
-
-	 	/* Implementa o callback de conexao fechada do player */
-	 	player.onConnectionClose(function() {
-	 		self.numberPlayers--;
-	 		self.removeFromEntityGrid(player.gridX, player.gridY ,player);
-	 		self.removeEntity(player);
-	 	});
-
-	 });
 };

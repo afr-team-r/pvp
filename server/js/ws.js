@@ -29,6 +29,13 @@ var Connection = function(id, connection, server) {
         this.connection.close();
     };
 
+    this.send = function(msg) {
+    	var msgStr = JSON.stringify(msg);
+
+		console.log("Sending " + msgStr);
+		self.connection.send(msgStr);
+    };
+
     /* CHAMA OS CALLBACKS */
 
 	this.connection.on("message", function(message) {

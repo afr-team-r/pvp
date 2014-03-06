@@ -18,10 +18,12 @@ var Player = function(connection, game) {
 	this.init(connection.id, "warrior", 100,10, 100, 10, 0, 0, null, 100, 3);
 
 	this.send = function(msg) {
-		msgStr = JSON.stringify(msg);
+		this.connection.send(msg);
+	};
 
-		console.log("Sending " + msgStr);
-		self.connection.connection.send(msgStr);
+	this.broadcast = function(msg) {
+		if(this.broadcast_callback)
+			this.broadcast_callback(msg);
 	};
 
 	/* Implementa o callback para o fechamento
@@ -34,6 +36,10 @@ var Player = function(connection, game) {
 
 	this.onConnectionClose = function(callback) {
 		self.connectionCloseCallback = callback;
+	};
+
+	this.onBroadcast = function(callback) {
+		this.broadcast_callback = callback;
 	};
 
 		/* Implementa o callback da conexao para cada
@@ -50,6 +56,11 @@ var Player = function(connection, game) {
 		switch(action) {
 			case Types.Messages.WELCOME: 
 				self.send([Types.Messages.WELCOME, self.id, self.hp, self.sp, self.gridX, self.gridY]);
+			break;
+
+			case Types.Messages.MOVE: 
+				self.send([Types.Messages.MOVE, self.id, self.hp, self.sp, self.gridX, self.gridY]);
+				self.broadcast([Types.Messages.WELCOME, self.id, self.hp, self.sp, self.gridX, self.gridY]);
 			break;
 		}
 		
