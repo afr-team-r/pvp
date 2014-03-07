@@ -38,16 +38,21 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 			var wait = setInterval(function() {
 
 				/** Verifica se o mapa foi carregado **/
-				if(self.world && self.world.ready) {
+				if(self.world && self.world.ready && self.client) {
+
+					self.client.sendWelcome();
+
+					self.updater.start();
+					self.renderer.start();
 
 					/** Desenha o background somente uma vez **/
 					self.renderer.drawMap(0);
 					self.renderer.drawMap(1);
 
-					/** Inicia o loop de atualizacao **/
-					self.update();
-
 					clearInterval(wait);
+
+					/** Inicia o loop de atualizacao **/
+					self.update();					
 				}
 			}, 100);		
    	 	};
@@ -72,13 +77,35 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 						{"name": "COLISAO", "context": null, "values":[]}
 					]); 
 
-					self.world.init(Properties.get("jsonMap"));
+					self.world.init(Properties.get("jsonMap"));	
 
-					self.player = new Player();
-					self.addEntity(self.player);
+					self.player = new Player();	
 
-					self.client = new Client("localhost", "5000");
+					self.player.sendMove(function(dx, dy) {
+						self.client.sendMove(dx, dy);
+					});
+
+
+					self.client = new Client("187.56.55.167", "5000");
 					self.client.init();
+
+					self.client.onWelcome(function(id, hp, sp, x, y) {	
+						self.player.setWelcomeSettings(id, hp, sp, x, y);
+						self.addEntity(self.player);
+					});
+
+					self.client.onMove(function(id, x, y, spriteRow) {	
+						self.updateEntityMove(id, x, y, spriteRow);
+						self.animateEntity(id);
+					});
+
+					self.client.onSpawn(function(id, x, y) {
+						temp = new Player();
+						temp.setWelcomeSettings(id, 0, 0, x, y);
+
+						self.addEntity(temp);	
+					});
+
 
 					self.renderer = new Renderer();
 					self.renderer.init(self, entities, foreground);
@@ -104,13 +131,24 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 		//	window.setTimeout(self.update, 5);
 
 			requestAnimFrame(self.update);  	
-   	 	};	 		
+   	 	};	 	
+
+   	 	this.animateEntity = function(id) {
+   	 		if(this.entities[id]) {
+   	 			this.entities[id].animate();
+   	 		}
+   	 	};	
 
    	 	this.addEntity = function(entity) {
-   	 		if(entity instanceof Entity) {
-   	 			if(this.entities[entity.id] == undefined) {
-   	 				this.entities[entity.id] = entity;
-   	 			}
+   	 		if(entity instanceof Entity) 
+   	 				this.entities[entity.id] = entity;			
+   	 	};
+
+   	 	this.updateEntityMove = function(id, x, y, spriteRow) {
+   	 		if(this.entities[id]) {
+   	 			this.entities[id].x = x;
+   	 			this.entities[id].y = y;
+   	 			this.entities[id].spriteRow = spriteRow;
    	 		}
    	 	};
 
@@ -164,7 +202,6 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 	  				case 'up': 
 	  				case 'down': 
 	  					self.player.move(self.world, KEY_CODES[e.keyCode]);
-	  					self.client.sendWelcome();
 	  				break;
 	  			}
   		};	

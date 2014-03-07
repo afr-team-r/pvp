@@ -2,7 +2,8 @@ Types = {
 
 	Messages: {
 		WELCOME : 0,
-		MOVE : 1
+		MOVE : 1,
+		SPAWN : 2
 	}		
 	
 };

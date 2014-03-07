@@ -28,18 +28,16 @@ define(["game", "properties", "jquery"], function(Game, Properties, $) {
 			this.entities = (entities && entities.getContext) ? entities.getContext("2d") : null;     
 			this.foreground = (foreground && foreground.getContext) ? foreground.getContext("2d") : null;   
 			this.statusBar =  $('#lifeBar')[0].getContext("2d");
-
-			this.start();
 		}
 
 		/** Startar a rendenizacao **/
 		this.start = function() {
-			this.running = 1;
+			this.running = true;
 		};
 
 		/** Parar a rendenizacao **/
 		this.stop = function() {
-			this.running = 0;
+			this.running = false;
 		};
 
 		/** O metodo que rendeniza de fato **/
@@ -58,7 +56,7 @@ define(["game", "properties", "jquery"], function(Game, Properties, $) {
 				this.game.forEachEntity(function(entity) {
 					self.drawEntity(entity);
 					
-					self.hitTaken(entity);
+				//	self.hitTaken(entity);
 				});				
 
 				// Camada acima do personagem
@@ -85,7 +83,6 @@ define(["game", "properties", "jquery"], function(Game, Properties, $) {
 
 			this.statusBar.stroke();
 
-
 			this.statusBar.fillStyle = "red";
 			this.statusBar.fillText("HP:",10,20);
 
@@ -109,8 +106,8 @@ define(["game", "properties", "jquery"], function(Game, Properties, $) {
 					(entity.spriteRow*Properties.get("tileSize")), 
 					Properties.get("tileSize"), 
 					Properties.get("tileSize"), 
-					entity.x, 
-					entity.y, 
+					entity.x*Properties.get("tileSize"), 
+					entity.y*Properties.get("tileSize"), 
 					Properties.get("tileSize"), 
 					Properties.get("tileSize"));
 		}

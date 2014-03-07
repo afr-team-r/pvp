@@ -36,8 +36,19 @@ define(["imageLoader", "properties", "entity", "animation", "timer", "client"], 
 			"down" : {"dx" : 0, "dy" : 1, "spriteRow" : 3}
 		};		    	    
 
-		// (id, hpm hpMax, sp, spMax, hitTaken, x, y, gridX, gridY, image, speed, spriteRow, animation)
-	    this.init("player", 100, 10, 100, 10, 0, 0, 0, 0, 0, ImageLoader.druid, 100, 3, new Animation(this.animationFrames, 0, this.animationDelay, 0));
+		// (id, type, hp,  hpMax, sp, spMax, hitTaken, x, y, gridX, gridY, image, speed, spriteRow, animation)
+	    this.init(0, "player", 0, 0, 0, 0, 0,  0, 0, 
+	    	ImageLoader.druid, 100, 3, new Animation(this.animationFrames, 0, this.animationDelay, 0));
+
+	    this.setWelcomeSettings = function(id, hp, sp, x, y) {
+	    	this.id = id;
+	    	this.hp = hp;
+	    	this.hpMax = hp;
+	    	this.sp = sp;
+	    	this.spMax = sp;
+	    	this.x = x;
+	    	this.y = y;
+	    };
 		
 	    this.getHPPercent = function() {
 	    	return (this.hp / this.hpMax) * 100;
@@ -55,18 +66,29 @@ define(["imageLoader", "properties", "entity", "animation", "timer", "client"], 
 	    	this.sp = sp > 0 ? sp : 0;
 	    }
 
+	    this.animate = function() {
+	    	// Executa um loop de animacao
+			this.animation.restartAnimation();	
+	    };
+
+	    /* Callbakcs */
+
+	    this.sendMove = function(callback) {
+	    	this.move_callback = callback;
+	    };
 
 	    // Evento ao apertas as setas do teclado
 		this.move = function(world, direction) {
 
-			if(!this.isMoving) {
+				this.move_callback(direction);
 
-				//Client.send("andei");
+
+			/*if(!this.isMoving) {
 
 				// Retorna diferente de 0 se colidiu
 				var colidiu = world.getColisaoValue(
-					this.gridX + directions[direction].dx, 
-					this.gridY + directions[direction].dy
+					this.x + directions[direction].dx, 
+					this.y + directions[direction].dy
 				);
 
 				if(!colidiu) {
@@ -74,27 +96,28 @@ define(["imageLoader", "properties", "entity", "animation", "timer", "client"], 
 					this.dx = directions[direction].dx;
 					this.dy = directions[direction].dy;
 
+					this.move_callback(this.dx, this.dy);
+
 					// Atualiza a linha de animacao				
 					this.spriteRow = directions[direction].spriteRow;
 
-					this.isMoving = 1;
-
-					// Executa um loop de animacao
-					this.animation.restartAnimation();				
+					this.isMoving = 1;		
 				} else {
 					this.setHP(this.hp-12);
 					this.hitTaken = 12;
 					this.hitAnimation.restartAnimation();
 				}
-			}		
+			}		*/
 	     };
 
 	     // Funcao padrao de todas as Entity
 	     this.update = function() {
 
+			//	this.isMoving = 0;
+
 	     	// Se ja passou o delay do passo, e devemos mover o jogador
 	     	// Caso nao, sai
-	     	if(!this.smallStepTimer.isOver(new Date().getTime()) || !this.isMoving)
+	     /*	if(!this.smallStepTimer.isOver(new Date().getTime()) || !this.isMoving)
 	     		return;
 
 	     	// Move o jogador um pouco por frame
@@ -111,7 +134,8 @@ define(["imageLoader", "properties", "entity", "animation", "timer", "client"], 
 				this.dx = this.dy = 0; 
 
 				this.isMoving = 0;
-			}			
+			}	 */
+
 	     };
 	};
 

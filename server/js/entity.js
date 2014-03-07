@@ -2,12 +2,12 @@
 	/* ARRUMAR ESSA MERDA DEPOIS */
 	var Entity = {
 
-		init : function(id, type, hp, sp, hpMax, spMax, gridX, gridY, image, speed, spriteRow) {
+		init : function(id, type, hp, sp, hpMax, spMax, x, y, image, speed, spriteRow) {
 
 			this.id = id;
 			this.type = type;
-			this.gridX = gridX;
-			this.gridY = gridY;
+			this.x = x;
+			this.y = y;
 			this.image = image;
 			this.speed = speed;
 			this.spriteRow = spriteRow;

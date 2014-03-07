@@ -1,6 +1,7 @@
 Types = require("./types.js"),
 Map = require("./map.js")
 Entity = require("./entity.js"),
+Types = require("./types.js"),
 _ = require('underscore');
 
 /* Abatracao que repesenta um mundo */
@@ -44,29 +45,50 @@ module.exports = Game = function() {
 	 	para quando um player se conecta ao mundo */
 	 	this.onPlayerConnect(function(player) {
 
-		 	self.numberPlayers++;	 	
-		 	self.addToEntityGrid(player.gridX, player.gridY ,player);
-		 	self.addEntity(player);
-
 		 	/* Implementa o callback de conexao fechada do player */
 		 	player.onConnectionClose(function() {
 		 		self.numberPlayers--;
-		 		self.removeFromEntityGrid(player.gridX, player.gridY ,player);
+		 		self.removeFromEntityGrid(player.x, player.y ,player);
 		 		self.removeEntity(player);
 		 	});
 
 		 	/* Implementa o callback de broadcast */
-		 	player.onBroadcast(function(msg) {
-		 		_.each(self.entities, function(entity) {
-		 			entity.connection.send(msg);
-		 		});
+		 	player.onBroadcast(function(msg, ignoreSelf) {
+
+		 		playerId = ignoreSelf ? player.id : null;
+
+		 		self.broadcast(msg, playerId);		 		
 		 	});
 
+		 	/* Acao no player ao entrar */
+
+		 	self.numberPlayers++;	 	
+		 	self.addToEntityGrid(player.x, player.y ,player);
+		 	self.addEntity(player);
+
+		 	self.sendGameSpawnList(player);
+
+		 	player.sendSpawnMessage();
 		 });
 
 	};
 
 	/* METODOS */
+
+	this.sendGameSpawnList = function(player) {
+		_.each(self.entities, function(entity) {
+		 	if(entity.id != player.id)
+		 		player.connection.send([Types.Messages.SPAWN, entity.id, entity.x, entity.y]);
+		 });
+	};
+
+	this.broadcast = function(msg, ignoredPlayer) {
+
+		 _.each(self.entities, function(entity) {
+		 	if(entity.id != ignoredPlayer)
+		 		entity.connection.send(msg);
+		 });
+	};
 
 	this.addEntity = function(entity) {
 		self.entities[entity.id] = entity;
@@ -98,6 +120,10 @@ module.exports = Game = function() {
 
    	 this.isReady = function() {
 	 	return this.ready;
+	 };
+
+	 this.isValidPosition = function(x, y) {
+	 	return self.map.isColision(x,y) == 0;
 	 };
 
    	 /* Callbacks */

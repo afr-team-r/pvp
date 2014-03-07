@@ -10,32 +10,29 @@ define(["map"], function(Map) {
 		this.player = game.player;
 		this.world = game.world;
 
-		this.running = 1;
+		this.running = false;
 
 		this.start = function() {
-			this.running = 1;
+			this.running = true;
 		}
 
 		this.stop = function() {
-			this.running = 0;
+			this.running = false;
 		}
 
 		this.update = function() {
 
-			this.game.forEachEntity(function(entity) {
+			if(this.running) {
+				this.game.forEachEntity(function(entity) {
 
-				entity.update();
+					entity.update();
 
-				if(entity.animation != null)
+					if(entity.animation != null)
 
-					entity.animation.animate();
-					entity.hitAnimation.animate();
-				
-					self.game.addToEntityGrid(entity.gridX, entity.gridY, entity);
-			});
+						entity.animation.animate();
+				});
+			}
 		}
-
-
 	};
 
 return Updater;
