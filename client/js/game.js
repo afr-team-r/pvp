@@ -15,11 +15,10 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 		this.world = null;
 		this.renderer = null;	
 		this.updater = null;
-
 		this.client = null;
 
 		this.entities = {};
-		this.entitiesGrid = [];
+		this.entitiesGrid = null;
 
 		this.mouse = {x: 0, y: 0, strokeStyle: "#CC0000"};
 
@@ -38,7 +37,9 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 			var wait = setInterval(function() {
 
 				/** Verifica se o mapa foi carregado **/
-				if(self.world && self.world.ready && self.client) {
+				if(self.world && self.world.ready && self.client && self.client.isReady()) {
+
+					clearInterval(wait);
 
 					self.client.sendWelcome();
 
@@ -49,12 +50,10 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 					self.renderer.drawMap(0);
 					self.renderer.drawMap(1);
 
-					clearInterval(wait);
-
 					/** Inicia o loop de atualizacao **/
 					self.update();					
 				}
-			}, 100);		
+			}, 200);		
    	 	};
 
    	 	/**  SETUP **/
@@ -66,9 +65,14 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
    	 			/** Verifica se as propriedades e as imagens foram carregadas **/
    	 			if(Properties.ready && ImageLoader.ready) {
 
+   	 				clearInterval(wait);
+
 					self.width = entities.width;
 					self.height = entities.height;	
 
+					self.initEntitiesGrid();
+
+					/** WORLD MAP **/
 					self.world = new Map(
 					 [
 						{"name": "FLOOR1", "context": background, "values":[]},
@@ -79,59 +83,70 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 
 					self.world.init(Properties.get("jsonMap"));	
 
+					/** PLAYER **/
 					self.player = new Player();	
 
 					self.player.sendMove(function(dx, dy) {
 						self.client.sendMove(dx, dy);
 					});
 
-
-					self.client = new Client("187.56.55.167", "5000");
+					/** CLIENT **/
+					self.client = new Client("192.168.2.40", "5000");
 					self.client.init();
 
 					self.client.onWelcome(function(id, hp, sp, x, y) {	
+
 						self.player.setWelcomeSettings(id, hp, sp, x, y);
+
 						self.addEntity(self.player);
+						self.addToEntityGrid(self.player);
 					});
 
 					self.client.onMove(function(id, x, y, spriteRow) {	
+
+						self.removeFromEntityGrid(self.entities[id]);
+
 						self.updateEntityMove(id, x, y, spriteRow);
+
+						self.addToEntityGrid(self.entities[id]);
+
 						self.animateEntity(id);
 					});
 
 					self.client.onSpawn(function(id, x, y) {
-						temp = new Player();
+						var temp = new Player();
 						temp.setWelcomeSettings(id, 0, 0, x, y);
 
 						self.addEntity(temp);	
+						self.addToEntityGrid(temp);
 					});
 
-
+					/** RENDERER **/
 					self.renderer = new Renderer();
 					self.renderer.init(self, entities, foreground);
 
+					/** UPDATER **/
 					self.updater = new Updater(self);
 
+					/** SCREEN EVENTS **/
 					document.onkeydown = self.keyDownEvent;
-
-					$('#foreground').mousemove(self.mouseOverEvent);				
-
-					clearInterval(wait);
+					$('#foreground').mousemove(self.mouseOverEvent);					
 				}
-			}, 100);
+			}, 200);
    	 	}
 
    	 	/** UPDATE **/ 
 
    	 	this.update = function() {
-
 			self.renderer.render(); 
 			self.updater.update();
 
-		//	window.setTimeout(self.update, 5);
+		//	window.setTimeout(self.update, 50);
 
 			requestAnimFrame(self.update);  	
-   	 	};	 	
+   	 	};	 
+
+   	 	/* Methods */
 
    	 	this.animateEntity = function(id) {
    	 		if(this.entities[id]) {
@@ -141,7 +156,7 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 
    	 	this.addEntity = function(entity) {
    	 		if(entity instanceof Entity) 
-   	 				this.entities[entity.id] = entity;			
+   	 			this.entities[entity.id] = entity;			
    	 	};
 
    	 	this.updateEntityMove = function(id, x, y, spriteRow) {
@@ -158,39 +173,49 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
    	 		});
    	 	};
 
-   	 	this.addToEntityGrid = function(x, y, entity) {
+   	 	this.initEntitiesGrid = function() {
+
+	        this.entitiesGrid = [];
+	        for(var i=0; i < self.height; i += 1) {
+	            this.entitiesGrid[i] = [];
+	            for(var j=0; j < self.width; j += 1) {
+	                this.entitiesGrid[i][j] = null;
+	            }
+	        }
+        
+    	};
+
+   	 	this.addToEntityGrid = function(entity) {
+
    	 		if(entity instanceof Entity) {
-
-   	 			index = y*self.world.width + x;
-
-   	 			if(this.entitiesGrid[index] == null) {
-
-   	 				self.removeFromEntityGrid(entity);
-
-   	 				self.entitiesGrid[index] = entity;
-   	 			}
-
+   	 			self.entitiesGrid[entity.y][entity.x] = entity; 	 			
    	 		}
    	 	};
 
-   	 	this.removeFromEntityGrid = function(entity, callback) {
-   	 		$.each(this.entitiesGrid, function(k, v) {
-   	 			if(v == entity) 
-   	 				delete self.entitiesGrid[k];
-   	 			
-   	 		});
+   	 	this.removeFromEntityGrid = function(entity) {
+   	 			delete self.entitiesGrid[entity.y][entity.x];
    	 	};
 
    	 	this.isEntityGridOcupped = function(x, y) {
-
-   	 		entity = self.entitiesGrid[y*self.world.width + x];
-
-   	 		if(entity != null && entity instanceof Entity) {
-   	 			return 1;
-   	 		}
-
-   	 		return 0;
+   	 		return self.entitiesGrid[y][x] != null;
    	 	};
+
+   	 	 this.mouseOverEvent = function(event) {
+			var gamePos = $('#container').offset();
+
+			//$('#container').css('cursor','default');
+
+			self.mouse.x = parseInt((event.pageX - gamePos.left) / Properties.get("tileSize"));
+			self.mouse.y = parseInt((event.pageY - gamePos.top) / Properties.get("tileSize"));
+
+			if(self.world.getColisaoValue(self.mouse.x, self.mouse.y)) {
+				self.mouse.strokeStyle = "#CC0000";			
+			} else if (self.isEntityGridOcupped(self.mouse.x, self.mouse.y)) {
+				self.mouse.strokeStyle = "#FFFF00";			
+			} else {
+				self.mouse.strokeStyle = "#66FF00";
+			}
+		};
 
    	 	/** EVENTOS DO TECLADO **/
 
@@ -201,29 +226,10 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 	  				case 'left':
 	  				case 'up': 
 	  				case 'down': 
-	  					self.player.move(self.world, KEY_CODES[e.keyCode]);
+	  					self.player.move(KEY_CODES[e.keyCode]);
 	  				break;
 	  			}
   		};	
-
-  		this.mouseOverEvent = function(event) {
-			var gamePos = $('#container').offset();
-
-			$('#container').css('cursor','default');
-
-			self.mouse.x = parseInt((event.pageX - gamePos.left) / Properties.get("tileSize"));
-			self.mouse.y = parseInt((event.pageY - gamePos.top) / Properties.get("tileSize"));
-
-			if(self.world.getColisaoValue(self.mouse.x, self.mouse.y)) {
-				self.mouse.strokeStyle = "#CC0000";			
-			} else if (self.isEntityGridOcupped(self.mouse.x, self.mouse.y)) {
-				$('#container').css('cursor','pointer');
-				self.mouse.strokeStyle = "#FFFF00";			
-			} else {
-				self.mouse.strokeStyle = "#66FF00";
-			}
-
-		};
 
 	};
 
@@ -237,7 +243,7 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 	        window.oRequestAnimationFrame      || 
 	        window.msRequestAnimationFrame     || 
 	        function(/* function */ callback){
-	            window.setTimeout(callback, 1000 / 60);
+	            window.setTimeout(callback, 1000 / 20);
 	        }
 	    );
 	}();

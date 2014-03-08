@@ -67,8 +67,8 @@ module.exports = Game = function() {
 		 	self.addEntity(player);
 
 		 	self.sendGameSpawnList(player);
-
 		 	player.sendSpawnMessage();
+		 	
 		 });
 
 	};

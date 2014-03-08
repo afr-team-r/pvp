@@ -25,11 +25,9 @@ define(["map"], function(Map) {
 			if(this.running) {
 				this.game.forEachEntity(function(entity) {
 
-					entity.update();
-
 					if(entity.animation != null)
-
 						entity.animation.animate();
+					
 				});
 			}
 		}

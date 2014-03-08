@@ -11,7 +11,7 @@ require(["jquery","game", "client"], function($, Game, Client) {
 		game = new Game();
 	
 		/* Carrega tudo necessario */
-		game.setup(background,entities, foreground);
+		game.setup(background, entities, foreground);
 
 		/** Inicia o jogo **/
 		game.init();

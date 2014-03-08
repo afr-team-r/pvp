@@ -19,17 +19,17 @@ define(["jquery","game", "types"], function($, Game, Types) {
 		this.init = function() {
 
 			 var url = "ws://"+ this.host +":"+ this.port +"/";
-			 socket = new WebSocket(url, "echo-protocol");
+			 this.socket = new WebSocket(url, "echo-protocol");
 
-			socket.addEventListener("open", function(event) {
+			this.socket.addEventListener("open", function(event) {
 				alert("Connected!");
 			});
 
-			socket.addEventListener("close", function(err) {
+			this.socket.addEventListener("close", function(err) {
 				alert("Connection lost!");
 			});
 
-			socket.addEventListener("message", function(event) {
+			this.socket.addEventListener("message", function(event) {
 				var messagejson = JSON.parse(event.data);
 				
 				self.handleAction(messagejson);
@@ -40,11 +40,11 @@ define(["jquery","game", "types"], function($, Game, Types) {
 		};
 
 		this.send = function(msg) {
-			socket.send(JSON.stringify(msg));
+			this.socket.send(JSON.stringify(msg));
 		}
 
 		this.isReady = function() {
-			return this.socket.readyState === 1;
+			return (this.socket != null) && (this.socket.readyState === 1);
 		};
 
 		this.handleAction = function(data) {			

@@ -21,8 +21,7 @@ var Player = function(connection, game) {
 		Esses dados serao carregados posteriormente 
 		de alguma base */
 
-	// id, type, hp, sp, hpMax, spMax, x, y, image, speed, spriteRow
-	this.init(connection.id, "warrior", 100, 10, 100, 10, 0, 0, null, 100, 3);
+	this.init(connection.id, "warrior", 100, 10, 100, 10, 0, 0, 100, null, 3);
 
 	this.send = function(msg) {
 		this.connection.send(msg);
@@ -96,6 +95,6 @@ var Player = function(connection, game) {
 
 };
 
-Player.prototype = Entity;
+Player.prototype = new Entity();
 
 module.exports = Player;

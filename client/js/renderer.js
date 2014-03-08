@@ -55,8 +55,6 @@ define(["game", "properties", "jquery"], function(Game, Properties, $) {
 
 				this.game.forEachEntity(function(entity) {
 					self.drawEntity(entity);
-					
-				//	self.hitTaken(entity);
 				});				
 
 				// Camada acima do personagem
