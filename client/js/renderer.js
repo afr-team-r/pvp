@@ -17,6 +17,7 @@ define(["game", "properties", "jquery"], function(Game, Properties, $) {
         this.statusBar = null;
 
         this.running = 0;
+        this.lastTime = new Date();
 
         /** Iniciando o renderer **/
         this.init = function(game, entities, foreground) {
@@ -46,21 +47,38 @@ define(["game", "properties", "jquery"], function(Game, Properties, $) {
 			if(this.running) {	
 
 				this.clearCanvas(this.entities);
-				this.clearCanvas(this.statusBar);
-				this.clearCanvas(this.foreground);
 
-				self.drawMouse();		
+				this.entities.save();
 
-				this.drawStatusBar();
+					this.game.forEachEntity(function(entity) {
+						self.drawEntity(entity);
+					});	
 
-				this.game.forEachEntity(function(entity) {
-					self.drawEntity(entity);
-				});				
+					self.drawMouse();		
+					this.drawStatusBar();
 
-				// Camada acima do personagem
-				this.drawMap(2);
+					this.drawMap(2);
+
+				this.entities.restore();
+
+				this.drawFPS();
+				
 			}
 		};
+
+		 this.drawFPS = function() {
+            var nowTime = new Date(),
+                diffTime = nowTime.getTime() - this.lastTime.getTime();
+
+            if (diffTime >= 1000) {
+                this.realFPS = this.frameCount;
+                this.frameCount = 0;
+                this.lastTime = nowTime;
+            }
+            this.frameCount++;
+        
+            this.entities.fillText("FPS: " + this.realFPS, 30, 30);
+        };
 
 		this.hitTaken = function(entity) {
 
@@ -74,26 +92,29 @@ define(["game", "properties", "jquery"], function(Game, Properties, $) {
 		};
 
 		this.drawStatusBar = function() {
-			this.statusBar.font = "20px verdana";
 
-			this.statusBar.strokeStyle = "white";
-			this.statusBar.rect(1,1,1020,50);
+			this.statusBar.save();
+				this.statusBar.font = "20px verdana";
 
-			this.statusBar.stroke();
+				this.statusBar.strokeStyle = "white";
+				this.statusBar.strokeRect(1,1,1020,50);
 
-			this.statusBar.fillStyle = "red";
-			this.statusBar.fillText("HP:",10,20);
+				this.statusBar.fillStyle = "red";
+				this.statusBar.fillText("HP:",10,20);
 
-			this.statusBar.fillRect(50,10, this.player.getHPPercent() * 2,10);
+				this.statusBar.fillRect(50,10, this.player.getHPPercent() * 2,10);
 
-			this.statusBar.fillStyle = "blue";
-			this.statusBar.fillText("SP:",10,45);
+				this.statusBar.fillStyle = "blue";
+				this.statusBar.fillText("SP:",10,45);
 
-			this.statusBar.fillRect(50,35,this.player.getSPPercent() * 2,10);			
+				this.statusBar.fillRect(50,35,this.player.getSPPercent() * 2,10);	
+			this.statusBar.restore();		
 		}
 
 		this.drawResized = function(ctx,img,sx,sy,swidth,sheight,x,y,width,height) {
-			ctx.drawImage(img,sx,sy,swidth,sheight,x*this.resizeValue,y*this.resizeValue,width*this.resizeValue,height*this.resizeValue);
+			ctx.save();
+				ctx.drawImage(img,sx,sy,swidth,sheight,x*this.resizeValue,y*this.resizeValue,width*this.resizeValue,height*this.resizeValue);
+			ctx.restore();
 		}
 
 		this.drawEntity = function(entity) {
@@ -112,28 +133,29 @@ define(["game", "properties", "jquery"], function(Game, Properties, $) {
 
 		this.clearEntity = function(entity) {
 			this.entities.clearRect(
-				entity.x-Properties.get("tileSize"),
-				entity.y-Properties.get("tileSize"),
-				Properties.get("tileSize")*3,
-				Properties.get("tileSize")*3);
+				entity.x,
+				entity.y,
+				Properties.get("tileSize"),
+				Properties.get("tileSize"));
 		}
 
 		this.clearCanvas = function(canvas) {
-			canvas.beginPath();
 			canvas.clearRect(0,0, this.game.width, this.game.height);
 		};
 
 
 		this.drawMouse = function() {
 
-			this.entities.strokeStyle = this.game.mouse.strokeStyle;
+			this.entities.save();
 
-			this.entities.rect(
+			this.entities.strokeStyle = this.game.mouse.strokeStyle;
+			this.entities.beginPath();
+			this.entities.strokeRect(
 									this.game.mouse.x * Properties.get("tileSize"), 
 									this.game.mouse.y * Properties.get("tileSize"),
 									Properties.get("tileSize")*this.resizeValue,
 									Properties.get("tileSize")*this.resizeValue);
-			this.entities.stroke();
+			this.entities.restore();
 		};
 
 

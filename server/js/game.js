@@ -123,7 +123,11 @@ module.exports = Game = function() {
 	 };
 
 	 this.isValidPosition = function(x, y) {
-	 	return self.map.isColision(x,y) == 0;
+	 	return x >= 0 && 
+	 		   x < this.map.width && 
+	 		   y >= 0  &&
+	 		   y < this.map.height &&
+	 		   self.map.isColision(x,y) == 0;
 	 };
 
    	 /* Callbacks */

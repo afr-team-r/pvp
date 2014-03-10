@@ -91,7 +91,7 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 					});
 
 					/** CLIENT **/
-					self.client = new Client("192.168.2.40", "5000");
+					self.client = new Client("201.27.32.179", "5000");
 					self.client.init();
 
 					self.client.onWelcome(function(id, hp, sp, x, y) {	
@@ -141,7 +141,7 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 			self.renderer.render(); 
 			self.updater.update();
 
-		//	window.setTimeout(self.update, 50);
+			//window.setTimeout(self.update, 1000/200);
 
 			requestAnimFrame(self.update);  	
    	 	};	 
@@ -243,7 +243,7 @@ define(["jquery", "map","player","renderer", "properties", "imageLoader", "timer
 	        window.oRequestAnimationFrame      || 
 	        window.msRequestAnimationFrame     || 
 	        function(/* function */ callback){
-	            window.setTimeout(callback, 1000 / 20);
+	            window.setTimeout(callback, 1000 / 60);
 	        }
 	    );
 	}();

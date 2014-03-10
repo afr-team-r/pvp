@@ -5,8 +5,8 @@ define(["imageLoader", "properties", "entity", "animation", "timer", "client"], 
 		/** VARIAVEIS **/
 
 		// Quantos frames de animacao possui o personagem
-		this.animationFrames = 9;
-		this.animationDelay = 20;	    	    
+		this.animationFrames = 3;
+		this.animationDelay = 50;	    	    
 
 	    this.init(0, "player", 0, 0, 0, 0, 0, 0, 100, ImageLoader.druid, 3, new Animation(this.animationFrames, 0, this.animationDelay, 0));
 
@@ -49,7 +49,7 @@ define(["imageLoader", "properties", "entity", "animation", "timer", "client"], 
 
 	    // Evento ao apertas as setas do teclado
 		this.move = function(direction) {
-				this.move_callback(direction);	     
+			this.move_callback(direction);	     
 		};
 	};
 

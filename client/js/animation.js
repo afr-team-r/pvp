@@ -10,7 +10,7 @@ define(["timer"], function(Timer) {
 
 		this.animate = function() {
 
-			if(loop || counter < numFrames) {
+			if(loop || counter <= numFrames) {
 				if(timer.isOver(new Date().getTime())) {
 
 					this.currentFrame = (this.currentFrame+1) % this.numFrames;
